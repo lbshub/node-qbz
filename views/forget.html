@@ -1,0 +1,191 @@
+<%- include header.html %>
+<div class="formbox">
+	<form method="post" action="" id="form1">
+		<ul class="formitem">
+			<h3 class="h_nav">找回登录密码</h3>
+			<li>
+				<input  name="phone" type="tel" value=""  placeholder='请输入手机号' class="text" autocomplete="off" id="phone" />
+				<div class="getPhoneCode"><button type="button" id="getPhoneCode">获取验证码</button><!--<button type="button" class="disabled">60秒后获取</button>--></div>
+			</li>
+			<li>
+				<input  name="phoneCode" type="tel" value=""  placeholder='请输入手机验证码（6位数字）' class="text" autocomplete="off" id="phoneCode" />
+			</li>
+		</ul>
+		<div class="formbtn">
+			<input name="qbz_next" type="button" value="下一步" class="button" id="button">
+		</div>
+	</form>
+	<form method="post" action="" id="form2" style="display:none;">
+		<ul class="formitem">
+			<h3 class="h_nav">找回登录密码</h3>
+			<li>
+				<input  name="password" id="pwd" type="password" value=""  placeholder='请输入新的交易密码' class="text" autocomplete="off" >
+			</li>
+			<li>
+				<input  name="password2" id="pwd2" type="password" value=""  placeholder='请再次输入新的交易密码' class="text" autocomplete="off" >
+			</li>
+		</ul>
+		<div class="formbtn">
+			<input name="qbz_save" type="button" value="提交" class="button" id="saveBtn">
+		</div>  
+	</form>
+</div>
+<script type="text/javascript">
+;(function(){
+	$(function(){
+		var $phone = $('#phone'), $getPhoneCode = $('#getPhoneCode'), $phoneCode = $('#phoneCode'), $btn = $('#button'), ck = 1;
+		$getPhoneCode.on('click',function(e){
+			e.preventDefault();
+			var v = $.trim($phone.val());
+			if(v === ''){
+				alert('手机号码不能为空');
+				$phone.focus();
+				return false;
+			}
+			if( !/^1[3|5|7|8]\d{9}$/.test(v) ){
+				alert('手机号码输入不正确');
+				$phone.focus();
+				return false;
+			}
+			var wait = 60, timeID = null;
+			$.ajax({
+				url: '/smsforget',
+				type: 'POST',
+				dataType: 'json',
+				data: {phone: v},
+				error: function(){
+					alert('手机验证码发送失败，请重试。');
+				},
+				success: function(result){
+					if(result.code == 1){
+						$getPhoneCode.attr('disabled','true').addClass('disabled');
+						timeID = setInterval(function() {
+							$getPhoneCode.text(wait+'\u79d2\u91cd\u65b0\u83b7\u53d6');
+							wait--;
+							if (wait < 0) {
+								clearInterval(timeID);
+								$getPhoneCode.text("\u83b7\u53d6\u9a8c\u8bc1\u7801");
+								$getPhoneCode.removeAttr("disabled").removeClass('disabled');
+							}
+						}, 1000);
+						Tips.alert('验证码已经发送，请注意查收!');
+					}else{
+						alert(result.message);
+					}
+				}
+			});
+		});
+		 
+		$btn.on('click',function(e){
+			e.preventDefault();
+			if(!ck) return;
+			ck = 0;
+			var v = $.trim($phone.val()), code = $.trim($phoneCode.val());
+			if(v === ''){
+				alert('手机号码不能为空');
+				ck = 1;
+				$phone.focus();
+				return false;
+			}
+			if( !/^1[3|5|7|8]\d{9}$/.test(v) ){
+				alert('手机号码输入不正确');
+				ck = 1;
+				$phone.focus();
+				return false;
+			}
+			if(code === ''){
+				alert('手机验证码不能为空');
+				ck = 1;
+				$phoneCode.focus();
+				return false;
+			}
+			if( !/^[0-9]{6}$/.test( code ) ){
+				alert('手机验证码为6位数字');
+				ck = 1;
+				$phoneCode.focus();
+				return false;
+			}
+			$.ajax({
+				url: '/pwdCheck',
+				type: 'POST',
+				dataType: 'json',
+				data: {phone: v, phoneCode: code},
+				error: function(){
+					alert('提交失败，请重试。');
+					ck = 1;
+				},
+				success: function(data){
+					if(data.code == 4) return location.href = '/';
+					ck = 1;
+					// $btn.val('立即注册');
+					// 0 验证码错误
+					// 1 验证码正确
+					// 2 验证码不存在
+					switch(data.code){
+						case 0:
+							alert('手机验证码错误！');
+						break;
+						case 2:
+							alert('验证码不存在');
+						break;
+						case 3:
+							alert('验证码超时，请重新获取');
+						break;
+						case 1:
+							$('#form1').slideUp('300',function(){
+								$('#form2').slideDown();
+							});
+							$('#saveBtn').on('click',function(e){
+								e.preventDefault();
+								if(!ck) return;
+								ck = 0;
+								if( $('#pwd').val() == '' ){
+									ck = 1;
+									alert('新密码不能为空');
+									return;
+								}
+								if( $('#pwd2').val() == '' ){
+									ck = 1;
+									alert('再次输入密码不能为空');
+									return;
+								}
+								if( $('#pwd').val() !== $('#pwd2').val() ){
+									ck = 1;
+									alert('两次密码输入不一致');
+									return;
+								}
+								$.ajax({
+									url: '/pwdSave',
+									type: 'POST',
+									dataType: 'json',
+									data: {phone: v, password: $('#pwd').val()},
+									error: function(){
+										alert('提交失败，请重试。');
+										ck = 1;
+									},
+									success: function(data){
+										ck = 1;
+										switch(data.code){
+											case 1:
+												alert('修改成功');
+												return location.href = '/login';
+											break;
+											case 2:
+												alert('新密码不能和原密码相同');
+											break;
+											case 0:
+												 alert('修改失败');
+											break;
+										}
+									}
+								});
+							});
+						break;
+					}
+				}
+			});
+		});
+	});
+}());
+</script> 
+<%- include footer.html %>

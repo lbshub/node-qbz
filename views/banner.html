@@ -1,0 +1,24 @@
+<div class="mslide" id="slideIMG">
+	<ul class="mcontent">
+		<li><a href="http:\\xw.qq.com"><img src="img/online.jpg" /></a></li>
+		<li><a href="#a2"><img src="img/presentation.jpg" /></a></li>
+		<li><a href="#a3"><img src="img/gift.jpg" /></a></li>
+		<li><a href="#a4"><img src="img/safe.jpg" /></a></li>
+	</ul>
+</div> <!-- End mslide -->
+<script type="text/javascript" src="js/mSlideIMG-loop.min.js"></script>
+<script type="text/javascript">
+//滚动图
+;(function(){
+	$(function(){
+		new mSlideIMG({
+			mslide: '#slideIMG',
+			mcontent: '#slideIMG .mcontent',
+			navclass: 'mhead',
+			auto: !!1,
+			delay: 5,
+			duration: 500 
+		}); 		
+	});
+}());
+</script>

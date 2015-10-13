@@ -1,0 +1,71 @@
+<%- include header.html %>
+<div class="formbox">
+ <form method="post" action="/login" id="form">
+	<ul class="formitem">
+		<li>
+			<input name="username" type="text" value=""  placeholder='请输入用户名' class="text" autocomplete="off" id="username" />
+		</li>
+		<li>
+			<input  name="password" type="password" value=""  placeholder='请输入密码' class="text" autocomplete="off" id="password" />
+		</li>
+	</ul>
+	<div class="formbtn">
+		<input name="button" type="submit" value="立即登录" class="button" id="button">
+	</div>
+</form>
+<p class="linktwo"><a href="/forget">忘记密码？</a><a href="/register">注册新账号</a></p>
+</div>
+<script type="text/javascript">
+;(function(){
+	$(function(){
+		var $form = $('#form'), $btn = $('#button'), $name = $('#username'), $password = $('#password'), ck = 1;
+		$form.on('submit',function(e){
+			e.preventDefault();
+			if(!ck) return;
+			ck = 0;
+			if($.trim($name.val()) === ''){
+				alert('用户名不能为空');
+				ck = 1;
+				$name.focus();
+				return false;
+			}
+			if($.trim($password.val()) === ''){
+				alert('密码不能为空');
+				ck = 1;
+				$password.focus();
+				return false;
+			}
+			$.ajax({
+				url: '/login',
+				type: 'POST',
+				dataType: 'json',
+				data: $form.serialize(),
+				beforeSend: function(){
+					$btn.val('登录中...');
+				},
+				error: function(){
+					alert('登录失败，请重试。');
+					ck = 1;
+					$btn.val('立即登录');
+				},
+				success: function(data){
+					if(!!data.result) return location.replace('/'); // location.href = '/';  
+					ck = 1;
+					$btn.val('立即登录');
+					switch( parseInt(data.code) ){
+						case 2:
+							alert('用户不存在');
+							$name.focus();		
+						break;
+						case 3:
+							alert('密码不正确');
+							$password.focus();	
+						break;
+					}	
+				}
+			});
+		});
+	});
+}());
+</script> 
+<%- include footer.html %>

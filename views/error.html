@@ -1,0 +1,23 @@
+<%- include header.html %>
+<div class="errorpage">
+	<div class="pcenter">
+		<p class="sorry">很抱歉！<img src="images/sorry.jpg" /></p>
+		<p><%= message %></p>
+		<p id="time">5秒后将返回首页</p>
+		<p class="goback"><a href="/">返回首页</a></p>
+	</div>
+</div>
+<script type="text/javascript">
+(function(){
+	var t = 6, o = document.getElementById('time');
+	!function left(){
+		if(--t < 0){
+			location.replace('/');
+		}else{
+			o.innerHTML = t + '秒后将返回首页';
+			setTimeout(left,1000);
+		}
+	}();
+}());
+</script> 
+<%- include footer.html %>

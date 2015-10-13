@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="stylesheet" type="text/css" href="css/qbz.css" />
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/qbz.js"></script>
+<title><%= title %> </title>
+</head>
+<body>
+<header id="head">
+	<% if(index){ %>
+	<div class="h_home"><a href="/"><img src="images/home.png" /></a></div>
+	<% }else{ %>
+	<div class="h_back"><a href="javascript:;" onclick="history.back();"><img src="images/back.png" /></a></div>
+	<% } %>
+	<div class="h_title"> <% if(!index){ %> <%= title %> <% } %> </div>
+	<div class="h_nav" id="nav"><a href="javascript:;"><img src="images/menu.png" /></a></div>
+</header>
+
+<div id="layer"></div>
+<nav id="menu">
+	<ul class="menulist">
+		<li><a href="/"><img src="images/ico_lc.png" /><span>理财产品</span></a></li>
+		<% if(!user){ %>	
+		<li><a href="/login"><img src="images/ico_dl.png" /><span>登录</span></a></li>
+		<li><a href="/register"><img src="images/ico_zc.png" /><span>注册</span></a></li>
+		<% }else{ %>
+		<li><a href="recharge.html"><img src="images/ico_cz.png" /><span>我要充值</span></a></li>
+		<li><a href="withdrawal.html"><img src="images/ico_tx.png" /><span>我要提现</span></a></li>
+		<li><a href="recharge-record.html"><img src="images/ico_mx.png" /><span>明细查询</span></a></li>
+		<li><a href="bankcard.html"><img src="images/ico_yhk.png" /><span>我的银行卡</span></a></li>
+		<li><a href="invite-friend.html"><img src="images/ico_yq.png" /><span>邀请管理</span></a></li>
+		<li><a href="account.html"><img src="images/ico_gr.png" /><span>个人中心</span></a></li>
+		<li><a href="certified-phone.html"><img src="images/ico_rz.png" /><span>认证管理</span></a></li>
+		<li><a href="password-login.html"><img src="images/ico_xg.png" /><span>修改密码</span></a></li>
+		<% } %>
+		<li><a href="calculator.html"><img src="images/ico_jsq.png" /><span>借贷计算器</span></a></li>
+		<% if(user){ %>	
+		<li><a href="/logout"><img src="images/ico_tc.png" /><span>安全退出</span></a></li>
+		<% } %>
+	</ul>
+</nav>
+
+<section id="body">
