@@ -1,10 +1,10 @@
 {
-  "name": "mblog",
+  "name": "qbz",
   "version": "0.0.1",
   "private": true,
   "main": "app.js",
-  "description": "node.js blog use mysql",
-  "repository": "https://github.com/lbshub/mblog",
+  "description": "node.js web use mysql",
+  "repository": "https://github.com/lbshub/node-qbzMobile",
   "engines": {
     "node": "0.12.x"
   },
